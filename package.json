@@ -1,0 +1,12 @@
+{
+  "name": "CheckersVersus",
+  "version": "0.0.1",
+  "description": "Checkers Versus created using Node.js",
+  "dependencies": {
+    "express": "^4.15.2",
+    "socket.io": "^1.7.3"
+  },
+  "scripts": {
+    "start": "node index.js"
+  }
+}
