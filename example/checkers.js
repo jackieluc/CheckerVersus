@@ -302,7 +302,7 @@ function Checkers(board) {
     }
   }
 
-  // register events
+  // register events (client)
 
   // TODO use publish / subcribe
   $('.checker').live("mouseover", function () {
