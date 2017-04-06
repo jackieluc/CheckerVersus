@@ -26,4 +26,21 @@ body {
 }
 
 #gameBoard tbody tr:nth-child(even) td:nth-child(even) {
-  background-color: #5c4400;
+    background-color: #5c4400;
+}
+
+.player1 {
+    margin-left: 5px;
+    width: 70px;
+    height: 70px;
+    background: red;
+    border-radius: 80px;
+}
+
+.player2 {
+    margin-left: 5px;
+    width: 70px;
+    height: 70px;
+    background: blue;
+    border-radius: 80px;
+}
