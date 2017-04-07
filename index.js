@@ -49,7 +49,6 @@ function initBoard() {
 
                     // this array is intended to keep track of all the indicies of the pieces
                     piecesIndex.push("#piece" + i + j);
-                    // $("#piece" + i + j).addClass("player1");
                 }
                 else
                     row.push("<td></td>");
@@ -61,7 +60,6 @@ function initBoard() {
                 if (j % 2 == 1) {
                     row.push("<td><div id='piece" + i + j + "'></div></td>");
                     piecesIndex.push("#piece" + i + j);
-                    // $("#piece" + i + j).addClass("player1");
                 }
                 else
                     row.push("<td></td>");
@@ -86,24 +84,25 @@ function initBoard() {
 }
 
 function initPieces() {
+
     for (let i = 0; i < piecesIndex.length; i++) {
         let pieceRowIndex = parseInt(piecesIndex[i].split("")[6]);
 
         if (pieceRowIndex >= 0 && pieceRowIndex <= 2) {
-            for(let j = 0; j < board[pieceRowIndex].length; j++) {
 
+            for(let j = 0; j < board[pieceRowIndex].length; j++) {
                 if (board[pieceRowIndex][j].length) {
-                    let place = board[pieceRowIndex][j].lastIndexOf("'");
-                    board[pieceRowIndex][j] = board[pieceRowIndex][j].substring(0, place) + " class='player1'" + board[pieceRowIndex][j].substring(place);
+                    let place = board[pieceRowIndex][j].lastIndexOf("'") + 1;
+                    board[pieceRowIndex][j] = board[pieceRowIndex][j].substring(0, place) + " class='player1'" + board[pieceRowIndex][j].substring(place, board[pieceRowIndex][j].length);
                 }
             }
         }
         else if (pieceRowIndex >= 6) {
-            for(let j = 0; j < board[pieceRowIndex].length; j++) {
 
+            for(let j = 0; j < board[pieceRowIndex].length; j++) {
                 if (board[pieceRowIndex][j].length) {
-                    let place = board[pieceRowIndex][j].lastIndexOf("'");
-                    board[pieceRowIndex][j] = board[pieceRowIndex][j].substring(0, place) + " class='player2" + board[pieceRowIndex][j].substring(place);
+                    let place = board[pieceRowIndex][j].lastIndexOf("'") + 1;
+                    board[pieceRowIndex][j] = board[pieceRowIndex][j].substring(0, place) + " class='player2'" + board[pieceRowIndex][j].substring(place, board[pieceRowIndex][j].length);
                 }
             }
         }
