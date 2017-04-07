@@ -1,5 +1,5 @@
 var $gameBoard = $('#gameBoard tBody');
-
+var board = [];
 $(function() {
 
     var socket = io();
@@ -16,6 +16,13 @@ $(function() {
 	});
 	
 	socket.on('initBoard', function(boardData) {
-		$gameBoard.html(boardData);
+		$gameBoard.html(boardData.html);
+		board = boardData.data;
 	});
+
+	$gameBoard.click(function() {
+        $('.player1, .player2').click( function() {
+            console.log("this: " + this.id);
+        });
+    })
 });

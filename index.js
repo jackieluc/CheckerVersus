@@ -27,7 +27,7 @@ io.on('connection', function(socket) {
 	io.emit('usersOnline', nicknames);
 
     // we need to do .join here to convert the array structure to string
-    io.emit('initBoard', board.join());
+    io.emit('initBoard', { html: board.join(), data: board });
 
 });
 
@@ -39,26 +39,26 @@ function initBoard() {
         board[i] = row;
         board[i].push("<tr>");
 
-        // these indices represent the columns that will have pieces placed on
+        // these indices represent the rows that will have pieces placed on
         if (i == 0 || i == 2 || i == 6 || i == 8) {
             // iterate through the columns
             for (let j = 0; j < 9; j++) {
                 // if the index is even, place a piece
                 if (j % 2 == 0) {
-                    row.push("<td><div id='piece" + i + j + "'></div></td>");
+                    row.push("<td><div id='" + i + j + "'></div></td>");
 
-                    // this array is intended to keep track of all the indicies of the pieces
+                    // this array is intended to keep track of all the indices of the pieces
                     piecesIndex.push("#piece" + i + j);
                 }
                 else
                     row.push("<td></td>");
             }
         }
-        // these indices represent the columns that will have pieces placed on
+        // these indices represent the rows that will have pieces placed on
         else if (i == 1 || i == 7) {
             for (let j = 0; j < 9; j++) {
                 if (j % 2 == 1) {
-                    row.push("<td><div id='piece" + i + j + "'></div></td>");
+                    row.push("<td><div id='" + i + j + "'></div></td>");
                     piecesIndex.push("#piece" + i + j);
                 }
                 else
@@ -67,9 +67,8 @@ function initBoard() {
         }
         // the row will not contain any pieces
         else {
-            for (let j = 0; j < 9; j++) {
+            for (let j = 0; j < 9; j++)
                 row.push("<td></td>");
-            }
         }
 
         // assign the row to the board
@@ -93,6 +92,7 @@ function initPieces() {
             for(let j = 0; j < board[pieceRowIndex].length; j++) {
                 if (board[pieceRowIndex][j].length) {
                     let place = board[pieceRowIndex][j].lastIndexOf("'") + 1;
+                    // board[pieceRowIndex][j].id = "player1-" + pieceRowIndex + j;
                     board[pieceRowIndex][j] = board[pieceRowIndex][j].substring(0, place) + " class='player1'" + board[pieceRowIndex][j].substring(place, board[pieceRowIndex][j].length);
                 }
             }
@@ -102,6 +102,7 @@ function initPieces() {
             for(let j = 0; j < board[pieceRowIndex].length; j++) {
                 if (board[pieceRowIndex][j].length) {
                     let place = board[pieceRowIndex][j].lastIndexOf("'") + 1;
+                    // board[pieceRowIndex][j].id = "player1-" + pieceRowIndex + j;
                     board[pieceRowIndex][j] = board[pieceRowIndex][j].substring(0, place) + " class='player2'" + board[pieceRowIndex][j].substring(place, board[pieceRowIndex][j].length);
                 }
             }
