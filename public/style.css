@@ -1,4 +1,46 @@
-* {
-    margin: 0;
-    padding: 0;
+body {
+   font-family: "Courier New";
+   font-size: normal;
+   background-color: #d6a61c;
+}
+
+#gameBoard {
+  border-collapse: collapse;
+  border: solid 1px black;
+}
+
+#gameBoard td {
+  width: 80px;
+  height: 80px;
+}
+#gameBoard tbody tr:nth-child(odd) td:nth-child(odd) {
+  background-color: #5c4400;
+}
+
+#gameBoard tbody tr:nth-child(odd) td:nth-child(even) {
+  background-color: #c7a953;
+}
+
+#gameBoard tbody tr:nth-child(even) td:nth-child(odd) {
+  background-color: #c7a953;
+}
+
+#gameBoard tbody tr:nth-child(even) td:nth-child(even) {
+    background-color: #5c4400;
+}
+
+.player1 {
+    margin-left: 5px;
+    width: 70px;
+    height: 70px;
+    background: red;
+    border-radius: 80px;
+}
+
+.player2 {
+    margin-left: 5px;
+    width: 70px;
+    height: 70px;
+    background: blue;
+    border-radius: 80px;
 }
