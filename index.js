@@ -51,13 +51,13 @@ io.on('connection', function(socket) {
     // we need to do .join here to convert the array structure to string
     io.emit('initBoard', { html: board.join(), data: board });
 	
-	socket.on('move', function(msg) {
+	socket.on('move', function(playerData) {
 		if(player == "player1") { //Checks if it's player1's turn
-			if(p1Pieces.indexOf("#piece" + msg) == 0) { //Checks if selected piece belongs to player1
+			if(p1Pieces.includes("#piece" + playerData.piece)) { //Checks if selected piece belongs to player1
 				isMoveValid();	
 			}
 		}else{
-			if(p2Pieces.indexOf("#piece" + msg) == 0) { //Checks if selected piece belongs to player2
+			if(p2Pieces.includes("#piece" + playerData.piece)) { //Checks if selected piece belongs to player2
 				isMoveValid();
 			}
 		}
@@ -67,7 +67,7 @@ io.on('connection', function(socket) {
 });
 
 function isMoveValid() {
-	
+	console.log("move is valid");
 	
 	changePlayer();
 }
@@ -79,6 +79,7 @@ function changePlayer() {
 	}else{
 		player = "player1";
 	}
+	console.log("changed turn... player: " + player);
 }
 
 function initBoard() {
@@ -145,7 +146,7 @@ function initBoard() {
 	
 	console.log(p1Pieces);
 	console.log(p2Pieces);
-	console.log(board);
+	// console.log(board);
 
     return board;
 }

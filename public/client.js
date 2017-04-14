@@ -37,8 +37,8 @@ $(function() {
             $('.player1, .player2').click(function () {
 
                 console.log("this: " + this.id);
+                socket.emit('move', { player: player, piece: this.id });
             });
-            socket.emit('move', this.id);
         }
         else {
             console.log("Not player");
