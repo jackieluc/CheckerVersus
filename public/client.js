@@ -22,7 +22,8 @@ $(function() {
 
 	$gameBoard.click(function() {
         $('.player1, .player2').click( function() {
-            console.log("this: " + this.id);
+            console.log("this: " + this.id + this.class);
         });
+		socket.emit('move', this.id);
     })
 });

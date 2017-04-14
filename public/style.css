@@ -37,10 +37,18 @@ body {
     border-radius: 80px;
 }
 
+.player1:active {
+    border: solid 2px white;
+}
+
 .player2 {
     margin-left: 5px;
     width: 70px;
     height: 70px;
     background: blue;
     border-radius: 80px;
+}
+
+.player2:active {
+    border: solid 2px white;
 }
