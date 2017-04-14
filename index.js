@@ -10,6 +10,8 @@ http.listen( port, function () {
 
 app.use(express.static(__dirname + '/public'));
 
+var players = [];
+var spectators = [];
 var nicknames = [];
 var numUsers = 0;
 var board = [];
@@ -37,6 +39,14 @@ io.on('connection', function(socket) {
 	socket.nickname = "player" + numUsers;
 	nicknames.push(socket.nickname);
 	io.emit('usersOnline', nicknames);
+
+    if (players.length < 2) {
+        players.push( { id: socket.nickname, player: "player" + players.length } )
+        socket.emit('player', { nickname: socket.nickname, player: "player" + players.length } );
+    }
+    else {
+        socket.emit('spectator', players);
+    }
 
     // we need to do .join here to convert the array structure to string
     io.emit('initBoard', { html: board.join(), data: board });
