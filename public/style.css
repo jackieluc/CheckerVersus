@@ -48,7 +48,3 @@ body {
 .active {
     border: solid 3px white;
 }
-
-.inactive {
-    border: none;
-}

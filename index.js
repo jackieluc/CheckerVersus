@@ -75,12 +75,14 @@ function isValidMove(playerTurn, pieceID) {
     if ((turn == "player2") && (playerTurn == turn)) {
         if (p2Pieces.includes("#piece" + pieceID)) {
             console.log("PLAYER 2 VALID MOVE");
+            return true;
         }
     }
 }
 
 function move(player, pieceID) {
 
+    // TODO: move the actual piece here
     changeTurn();
 }
 
