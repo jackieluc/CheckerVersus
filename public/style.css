@@ -48,3 +48,21 @@ body {
 .active {
     border: solid 3px white;
 }
+
+.noPiece {
+	opacity: 0;
+    margin-left: 5px;
+    width: 70px;
+    height: 70px;
+	background: white;
+    border-radius: 80px;
+}
+
+.posMove {
+	opacity: 0.2;
+    margin-left: 5px;
+    width: 70px;
+    height: 70px;
+    background: white;
+    border-radius: 80px;
+}

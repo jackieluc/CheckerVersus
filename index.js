@@ -22,16 +22,16 @@ var p2Pieces = [];
 var pieceTracker = [['#piece00', 0, '#piece02', 0, '#piece04', 0, '#piece06', 0, '#piece08'], 
 					[0, '#piece11', 0, '#piece13', 0, '#piece15', 0, '#piece17', 0],
 					['#piece20', 0, '#piece22', 0, '#piece24', 0, '#piece26', 0, '#piece28'],
-					[0, 0, '0', 0, 0, 0, 0, 0, 0],
-					[0, 0, '0', 0, 0, 0, 0, 0, 0],
-					[0, 0, '0', 0, 0, 0, 0, 0, 0],
+					[0, 0, 0, 0, 0, 0, 0, 0, 0],
+					[0, 0, 0, 0, 0, 0, 0, 0, 0],
+					[0, 0, 0, 0, 0, 0, 0, 0, 0],
 					['#piece60', 0, '#piece62', 0, '#piece64', 0, '#piece66', 0, '#piece68'],
 					[0, '#piece71', 0, '#piece73', 0, '#piece75', 0, '#piece77', 0],
 					['#piece80', 0, '#piece82', 0, '#piece84', 0, '#piece86', 0, '#piece88']]
 
 io.on('connection', function(socket) {
 
-    board = initBoard();
+  board = initBoard();
 	console.log('A user connected');
 
 	numUsers++;
@@ -53,22 +53,38 @@ io.on('connection', function(socket) {
     io.emit('initBoard', { html: board.join(), data: board });
 	
 	socket.on('move', function(playerData) {
-        if (isValidMove(playerData.player, playerData.piece)) {
-            move(playerData.player, playerData.piece);
+       if (isValidMove(playerData.player, playerData.piece)) {
+           move(playerData.player, playerData.piece);
         }
         else {
 
-        }
+		}
+	});
+	
+//	socket.on('move', function(playerData) {
+//		move(playerData.player, playerData.piece);
+//	});
+//	
+	socket.on('selectPiece', function(playerData) {
+		var list = 	getValidMoves(playerData.player, playerData.piece);
+		
+		if(list.length == 2)
+			socket.emit('grab2Piece', {left: list[0], right: list[1]});
+		
+	});
+	
+	socket.on('send2Piece', function(retrieve2Pieces) {
+		showPossibleMoves(retrieve2Pieces.left, retrieve2Pieces.right);
 	});
 
 });
 
 function isValidMove(playerTurn, pieceID) {
-    console.log("Turn: " + turn + ", Player : " + playerTurn + " ID: " + pieceID);
+    console.log("Turn: " + turn + ", Player: " + playerTurn + " ID: " + pieceID);
 
     if((turn == "player1") && (playerTurn == turn)) {
         if(p1Pieces.includes("#piece" + pieceID)) {
-            console.log("PLAYER 1 VALID MOVE");
+			      console.log("SHOWING PLAYER 1 VALID MOVES");
             return true;
         }
     }
@@ -80,12 +96,82 @@ function isValidMove(playerTurn, pieceID) {
     }
 }
 
-function move(player, pieceID) {
+function getValidMoves(player, pieceID) 
+{
+	//var selected = document.getElementById(pieceID);
+	//if (selected.classList.contains("king"))
+	//	king = true;
+	
+	var row = parseInt(pieceID.substring(0, 1));
+	var col = parseInt(pieceID.substring(1));
+	
+//	console.log("row: " + row + " col: " + col);
+	
+	// we only need to check pieces that 
+	if (false)
+	{
+		var checkRowBelow = row++;
+		var checkRowAbove = row--;
+		
+		var checkColLeft = col--;
+		var checkColRight = col++;
+		
+		var idSW = toString(checkRowBelow) + toString(checkColLeft);
+		var idSE = toString(checkRowBelow) + toString(checkColRight);
+		var idNW = toString(checkRowAbove) + toString(checkColLeft);
+		var idNE = toString(checkRowAbove) + toString(checkColRight);
+		
+		var checkSW = document.getElementById(idSW);
+		var checkSE = document.getElementById(idSE);
+		var checkNW = document.getElementById(idNW);
+		var checkNE = document.getElementById(idNE);
+		
+		if(checkSW.class == "noPiece")
+			checkSW.class = "posMove";
+		
+		if(checkSE.class == "noPiece")
+			checkSE.class = "posMove";
+		
+		if(checkNW.class == "noPiece")
+			checkNW.class = "posMove";
+		
+		if(checkNE.class == "noPiece")
+			checkNE.class = "posMove";
+		
+	}
+	else
+	{
+		if(player == "player1")
+			var checkRow = row + 1;
+		else 
+			var checkRow = row - 1;
+		
+		
+		
+		checkColLeft = col - 1;
+		checkColRight = col + 1;
+		
+		var idLeft = checkRow.toString() + checkColLeft.toString();
+		var idRight = checkRow.toString() + checkColRight.toString();
+		
+//		console.log("row: " + idLeft + " col: " + idRight);
 
-    // TODO: move the actual piece here
-    changeTurn();
+		var toReturn = [idLeft, idRight];
+		
+		return toReturn;
+		
+//		socket.emit('grab2Piece', {left: idLeft, right: idRight});
+		
+//		checkLeft = $gameBoard.getElementById(idLeft);
+//		checkRight = $gameBoard.getElementById(idRight);
+		
+	}
 }
 
+function move(player, pieceID) {
+	
+    changeTurn();
+}
 
 function changeTurn() {
 	if (turn == "player1") turn = "player2";
@@ -131,7 +217,7 @@ function initBoard() {
         else if (i == 3 || i == 5) {
             for (var j = 0; j < 9; j++) {
 				if (j % 2 == 1) {
-					row.push("<td id='b" + i + j + "'></td>");
+					row.push("<td id='b" + i + j + "'><div id='" + i + j + "' class='blank noPiece'></div></td>");
 				}else{
 					row.push("<td></td>");
 				}
@@ -139,7 +225,7 @@ function initBoard() {
 		}else if(i == 4) {
 			for (var j = 0; j < 9; j++) {
 				if (j % 2 == 0) {
-					row.push("<td id='b" + i + j + "'></td>");
+					row.push("<td id='b" + i + j + "'><div id='" + i + j + "' class='blank noPiece'></td>");
 				}else{
 					row.push("<td></td>");	
 				}
