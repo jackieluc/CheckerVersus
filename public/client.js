@@ -44,15 +44,15 @@ $(function() {
 		
 		console.log("left: " + leftPiece + " right: " + rightPiece);
 		
-		if (leftPiece.classList.contains("noPiece"))
+		if (leftPiece.classList.contains("noPiece") && leftPiece != null)
 		{	
-			leftPiece.removeClass("noPiece");
-			leftPiece.addClass("posMove");
+			leftPiece.classList.remove("noPiece");
+			leftPiece.classList.add("posMove");
 		}
-		if (rightPiece.classList.contains("noPiece"))
+		if (rightPiece.classList.contains("noPiece") && rightPiece != null)
 		{	
-			rightPiece.removeClass("noPiece");
-			rightPiece.addClass("posMove");
+			rightPiece.classList.remove("noPiece");
+			rightPiece.classList.add("posMove");
 		}
 			
 		
