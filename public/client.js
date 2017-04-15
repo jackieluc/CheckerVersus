@@ -45,17 +45,20 @@ $(function() {
 		var leftPiece = document.getElementById(piecesToGrab.left);
 		var rightPiece = document.getElementById(piecesToGrab.right);
 		
-		console.log("left: " + leftPiece + " right: " + rightPiece);
-		
-		if (leftPiece.classList.contains("noPiece") && leftPiece != null)
-		{	
-			leftPiece.classList.remove("noPiece");
-			leftPiece.classList.add("posMove");
+		//console.log("left: " + leftPiece + " right: " + rightPiece);
+		if(leftPiece != null) {
+			if (leftPiece.classList.contains("noPiece"))
+			{	
+				leftPiece.classList.remove("noPiece");
+				leftPiece.classList.add("posMove");
+			}
 		}
-		if (rightPiece.classList.contains("noPiece") && rightPiece != null)
-		{	
-			rightPiece.classList.remove("noPiece");
-			rightPiece.classList.add("posMove");
+		if(rightPiece != null) {
+			if (rightPiece.classList.contains("noPiece") && rightPiece != null)
+			{	
+				rightPiece.classList.remove("noPiece");
+				rightPiece.classList.add("posMove");
+			}
 		}
 			
 		
