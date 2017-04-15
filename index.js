@@ -19,6 +19,7 @@ var piecesIndex = [];
 var turn = "player1";
 var p1Pieces = [];
 var p2Pieces = [];
+var selectedPieceID;
 var pieceTracker = [['#piece00', 0, '#piece02', 0, '#piece04', 0, '#piece06', 0, '#piece08'], 
 					[0, '#piece11', 0, '#piece13', 0, '#piece15', 0, '#piece17', 0],
 					['#piece20', 0, '#piece22', 0, '#piece24', 0, '#piece26', 0, '#piece28'],
@@ -53,21 +54,25 @@ io.on('connection', function(socket) {
     // we need to do .join here to convert the array structure to string
     io.emit('initBoard', { html: board.join(), data: board });
 	
+//	socket.on('move', function(playerData) {
+//       if (isValidMove(playerData.player, playerData.piece)) {
+//           move(playerData.player, playerData.piece);
+//        }
+//        else {
+//
+//		}
+//	});
+	
 	socket.on('move', function(playerData) {
-       if (isValidMove(playerData.player, playerData.piece)) {
-           move(playerData.player, playerData.piece);
-        }
-        else {
-
-		}
+		var movePiece = move(playerData.player, playerData.piece);
+		socket.emit('movePieces', {oldPosition: movePiece[0], newPosition: movePiece[1]});
 	});
 	
-//	socket.on('move', function(playerData) {
-//		move(playerData.player, playerData.piece);
-//	});
-//	
+
 	socket.on('selectPiece', function(playerData) {
-		var list = 	getValidMoves(playerData.player, playerData.piece);
+		console.log(playerData.piece);
+		selectedPieceID = playerData.piece;
+		var list = getValidMoves(playerData.player, playerData.piece);
 		
 		if(list.length == 2)
 			socket.emit('grab2Piece', {left: list[0], right: list[1]});
@@ -105,8 +110,6 @@ function getValidMoves(player, pieceID)
 	
 	var row = parseInt(pieceID.substring(0, 1));
 	var col = parseInt(pieceID.substring(1));
-	
-//	console.log("row: " + row + " col: " + col);
 	
 	// we only need to check pieces that 
 	if (false)
@@ -154,24 +157,37 @@ function getValidMoves(player, pieceID)
 		
 		var idLeft = checkRow.toString() + checkColLeft.toString();
 		var idRight = checkRow.toString() + checkColRight.toString();
-		
-//		console.log("row: " + idLeft + " col: " + idRight);
 
 		var toReturn = [idLeft, idRight];
 		
 		return toReturn;
-		
-//		socket.emit('grab2Piece', {left: idLeft, right: idRight});
-		
-//		checkLeft = $gameBoard.getElementById(idLeft);
-//		checkRight = $gameBoard.getElementById(idRight);
-		
 	}
 }
 
 function move(player, pieceID) {
 	
+	var initialRow = parseInt(selectedPieceID.substring(0,1));
+	var initialCol = parseInt(selectedPieceID.substring(1));
+	
+	var newRow = parseInt(pieceID.substring(0,1));
+	var newCol = parseInt(pieceID.substring(1));
+	
+	var piece = '#piece' + pieceID;
+	
+	pieceTracker[initialRow][initialCol] = 0;
+	pieceTracker[newRow][newCol] = piece;
+	
+	var oldPosition = initialRow.toString() + initialCol.toString();
+	var newPosition = newRow.toString() + newCol.toString();
+	
+	console.log(oldPosition);
+	console.log(newPosition);
+	
     changeTurn();
+	
+	var toReturn = [oldPosition, newPosition]
+	
+	return toReturn;
 }
 
 function changeTurn() {

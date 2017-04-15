@@ -43,8 +43,7 @@ $(function() {
 		board = boardData.data;
 	});
 	
-	socket.on('grab2Piece', function(piecesToGrab) 
-	{
+	socket.on('grab2Piece', function(piecesToGrab) {
 	    $('.blank').removeClass('posMove');
 	    $('.blank').addClass('noPiece');
 
@@ -66,14 +65,32 @@ $(function() {
 				rightPiece.classList.add("posMove");
 			}
 		}
-			
+	});
+	
+	socket.on('movePieces', function(piece) {
+		var oldPos = document.getElementById(piece.oldPosition);
+		var newPos = document.getElementById(piece.newPosition);
 		
+		//if(oldPos.classList.contains("player1") {
+			oldPos.classList.remove("player1");
+			oldPos.classList.add("noPiece");
+			newPos.classList.remove("noPiece");
+			newPos.classList.remove("posMove");
+			newPos.classList.add("player1");
+		//}
+		/*
+		if (oldPos.classList.contains("player2") {
+			oldPos.classList.remove("player2");
+			oldPos.classList.add("noPiece");
+			newPos.classList.remove("noPiece");
+			newPos.classList.add("player2");
+		}
+		*/
 	});
 	
 
     $gameBoard.click(function () {
         // cannot click on the pieces if you are not a player
-		
         if (players.includes(player)) {
             console.log("Player: " + player + " nickname: " + nickname);
             if (player == "player1") {
@@ -81,13 +98,8 @@ $(function() {
                     console.log("player: " + player + " piece: " + this.id);
                     $('.player1').removeClass("active");
                     $(this).addClass("active");
-					
                     socket.emit('selectPiece', { player: player, piece: this.id });
                 });
-//				$('.posMove').click(function () {
-//					$('.player1').removeClass("active");
-//					socket.emit('move', {player: player, piece: this.id) });
-//				});
             }
             else if (player == "player2") {
                 $('.player2').click(function () {
@@ -97,41 +109,39 @@ $(function() {
                     $(this).addClass("active");
                     socket.emit('selectPiece', { player: player, piece: this.id });
                 });
-//				$('.posMove').click(function () {
-//					$('.player1').removeClass("active");
-//					socket.emit('move', {player: player, piece: this.id) });
-//				});
             }
         }
         else {
             console.log("Not a player");
         }
     });
+	
 
-    $gameBoard.click(function () {
-        // cannot click on the pieces if you are not a player
-        if (players.includes(player)) {
-            console.log("Player: " + player + " nickname: " + nickname);
-            if (player == "player1") {
-                $('.player1').click(function () {
-                    console.log("player: " + player + " piece: " + this.id);
-                    $('.player1').removeClass("active");
-                    $(this).addClass("active");
-                    socket.emit('move', { player: player, piece: this.id });
-                });
-            }
-            else if (player == "player2") {
-                $('.player2').click(function () {
+	$gameBoard.click(function () {
+	// cannot click on the pieces if you are not a player
+	
+	if (players.includes(player)) {
+		console.log("Player: " + player + " nickname: " + nickname);
+		if (player == "player1") {
+			$('.posMove').click(function () {
+				console.log("player: " + player + " move to: " + this.id);
+				$('.player1').removeClass("active");
+				$('.blank').removeClass('posMove');
+				$('.blank').addClass('noPiece');
+				
+				socket.emit('move', { player: player, piece: this.id });
+			});
+		}
+		else if (player == "player2") {
+			$('.posMove').click(function () {
+				console.log("player: " + player + " move to: " + this.id);
+				$('.player2').removeClass("active");
+				$('.blank').removeClass('posMove');
+				$('.blank').addClass('noPiece');
+				socket.emit('move', { player: player, piece: this.id });
+			});
+		}
+	}
+});
 
-                    console.log("player: " + player + " piece: " + this.id);
-                    $('.player2').removeClass("active");
-                    $(this).addClass("active");
-                    socket.emit('move', { player: player, piece: this.id });
-                });
-            }
-        }
-        else {
-            console.log("Not a player");
-        }
-    });
 });
