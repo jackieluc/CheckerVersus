@@ -66,7 +66,7 @@ io.on('connection', function(socket) {
 //	});
 //	
 	socket.on('selectPiece', function(playerData) {
-		list = 	getValidMoves(playerData.player, playerData.piece);
+		var list = 	getValidMoves(playerData.player, playerData.piece);
 		
 		if(list.length == 2)
 			socket.emit('grab2Piece', {left: list[0], right: list[1]});
@@ -93,6 +93,7 @@ function isValidMove(playerTurn, pieceID) {
     if ((turn == "player2") && (playerTurn == turn)) {
         if (p2Pieces.includes("#piece" + pieceID)) {
             console.log("PLAYER 2 VALID MOVE");
+            return true;
         }
     }
 }
@@ -104,24 +105,24 @@ function getValidMoves(player, pieceID)
 	//if (selected.classList.contains("king"))
 	//	king = true;
 	
-	row = parseInt(pieceID.substring(0, 1));
-	col = parseInt(pieceID.substring(1));
+	var row = parseInt(pieceID.substring(0, 1));
+	var col = parseInt(pieceID.substring(1));
 	
 //	console.log("row: " + row + " col: " + col);
 	
 	// we only need to check pieces that 
 	if (false)
 	{
-		checkRowBelow = row++;
-		checkRowAbove = row--;
+		var checkRowBelow = row++;
+		var checkRowAbove = row--;
 		
-		checkColLeft = col--;
-		checkColRight = col++;
+		var checkColLeft = col--;
+		var checkColRight = col++;
 		
-		idSW = toString(checkRowBelow) + toString(checkColLeft);
-		idSE = toString(checkRowBelow) + toString(checkColRight);
-		idNW = toString(checkRowAbove) + toString(checkColLeft);
-		idNE = toString(checkRowAbove) + toString(checkColRight);
+		var idSW = toString(checkRowBelow) + toString(checkColLeft);
+		var idSE = toString(checkRowBelow) + toString(checkColRight);
+		var idNW = toString(checkRowAbove) + toString(checkColLeft);
+		var idNE = toString(checkRowAbove) + toString(checkColRight);
 		
 		var checkSW = document.getElementById(idSW);
 		var checkSE = document.getElementById(idSE);
@@ -144,21 +145,21 @@ function getValidMoves(player, pieceID)
 	else
 	{
 		if(player == "player1")
-			checkRow = row + 1;
+			var checkRow = row + 1;
 		else 
-			checkRow = row - 1;
+			var checkRow = row - 1;
 		
 		
 		
 		checkColLeft = col - 1;
 		checkColRight = col + 1;
 		
-		idLeft = checkRow.toString() + checkColLeft.toString();
-		idRight = checkRow.toString() + checkColRight.toString();
+		var idLeft = checkRow.toString() + checkColLeft.toString();
+		var idRight = checkRow.toString() + checkColRight.toString();
 		
 //		console.log("row: " + idLeft + " col: " + idRight);
 
-		toReturn = [idLeft, idRight];
+		var toReturn = [idLeft, idRight];
 		
 		return toReturn;
 		
@@ -221,7 +222,7 @@ function initBoard() {
         else if (i == 3 || i == 5) {
             for (var j = 0; j < 9; j++) {
 				if (j % 2 == 1) {
-					row.push("<td id='b" + i + j + "'><div id='" + i + j + "' class='noPiece'></div></td>");
+					row.push("<td id='b" + i + j + "'><div id='" + i + j + "' class='blank noPiece'></div></td>");
 				}else{
 					row.push("<td></td>");
 				}
@@ -229,7 +230,7 @@ function initBoard() {
 		}else if(i == 4) {
 			for (var j = 0; j < 9; j++) {
 				if (j % 2 == 0) {
-					row.push("<td id='b" + i + j + "'><div id='" + i + j + "' class='noPiece'></td>");
+					row.push("<td id='b" + i + j + "'><div id='" + i + j + "' class='blank noPiece'></td>");
 				}else{
 					row.push("<td></td>");	
 				}

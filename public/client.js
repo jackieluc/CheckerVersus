@@ -39,8 +39,11 @@ $(function() {
 	
 	socket.on('grab2Piece', function(piecesToGrab) 
 	{
-		leftPiece = document.getElementById(piecesToGrab.left);
-		rightPiece = document.getElementById(piecesToGrab.right);
+	    $('.blank').removeClass('posMove');
+	    $('.blank').addClass('noPiece');
+
+		var leftPiece = document.getElementById(piecesToGrab.left);
+		var rightPiece = document.getElementById(piecesToGrab.right);
 		
 		console.log("left: " + leftPiece + " right: " + rightPiece);
 		
@@ -83,7 +86,7 @@ $(function() {
                     console.log("player: " + player + " piece: " + this.id);
                     $('.player2').removeClass("active");
                     $(this).addClass("active");
-                    socket.emit('move', { player: player, piece: this.id });
+                    socket.emit('selectPiece', { player: player, piece: this.id });
                 });
 //				$('.posMove').click(function () {
 //					$('.player1').removeClass("active");
