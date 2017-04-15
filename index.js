@@ -46,6 +46,7 @@ io.on('connection', function(socket) {
         socket.emit('player', { nickname: socket.nickname, player: "player" + players.length } );
     }
     else {
+        spectators.push( {id: socket.nickname, player: "none" } );
         socket.emit('spectator', players);
     }
 
