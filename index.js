@@ -31,7 +31,7 @@ var pieceTracker = [['#piece00', 0, '#piece02', 0, '#piece04', 0, '#piece06', 0,
 
 io.on('connection', function(socket) {
 
-    board = initBoard();
+  board = initBoard();
 	console.log('A user connected');
 
 	numUsers++;
@@ -84,9 +84,7 @@ function isValidMove(playerTurn, pieceID) {
 
     if((turn == "player1") && (playerTurn == turn)) {
         if(p1Pieces.includes("#piece" + pieceID)) {
-            console.log("PLAYER 1 VALID MOVE");
-			console.log("SHOWING PLAYER 1 VALID MOVES");
-			
+			      console.log("SHOWING PLAYER 1 VALID MOVES");
             return true;
         }
     }
@@ -97,7 +95,6 @@ function isValidMove(playerTurn, pieceID) {
         }
     }
 }
-
 
 function getValidMoves(player, pieceID) 
 {
@@ -171,12 +168,10 @@ function getValidMoves(player, pieceID)
 	}
 }
 
-
 function move(player, pieceID) {
 	
     changeTurn();
 }
-
 
 function changeTurn() {
 	if (turn == "player1") turn = "player2";

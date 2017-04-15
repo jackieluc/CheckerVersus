@@ -102,4 +102,30 @@ $(function() {
         }
     });
 
+    $gameBoard.click(function () {
+        // cannot click on the pieces if you are not a player
+        if (players.includes(player)) {
+            console.log("Player: " + player + " nickname: " + nickname);
+            if (player == "player1") {
+                $('.player1').click(function () {
+                    console.log("player: " + player + " piece: " + this.id);
+                    $('.player1').removeClass("active");
+                    $(this).addClass("active");
+                    socket.emit('move', { player: player, piece: this.id });
+                });
+            }
+            else if (player == "player2") {
+                $('.player2').click(function () {
+
+                    console.log("player: " + player + " piece: " + this.id);
+                    $('.player2').removeClass("active");
+                    $(this).addClass("active");
+                    socket.emit('move', { player: player, piece: this.id });
+                });
+            }
+        }
+        else {
+            console.log("Not a player");
+        }
+    });
 });

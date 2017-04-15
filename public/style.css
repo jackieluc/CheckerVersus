@@ -49,10 +49,6 @@ body {
     border: solid 3px white;
 }
 
-.inactive {
-    border: none;
-}
-
 .noPiece {
 	opacity: 0;
     margin-left: 5px;
