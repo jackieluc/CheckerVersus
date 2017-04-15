@@ -37,10 +37,6 @@ body {
     border-radius: 80px;
 }
 
-.player1:active {
-    border: solid 2px white;
-}
-
 .player2 {
     margin-left: 5px;
     width: 70px;
@@ -49,6 +45,10 @@ body {
     border-radius: 80px;
 }
 
-.player2:active {
-    border: solid 2px white;
+.active {
+    border: solid 3px white;
+}
+
+.inactive {
+    border: none;
 }

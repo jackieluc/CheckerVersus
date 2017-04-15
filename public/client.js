@@ -19,6 +19,7 @@ $(function() {
 
     socket.on('nickname', function(nick) {
        nickname = nick;
+       $("#nickname").text("You are: " + nickname);
     });
 
 	socket.on('player', function(data) {
@@ -42,8 +43,9 @@ $(function() {
             console.log("Player: " + player + " nickname: " + nickname);
             if (player == "player1") {
                 $('.player1').click(function () {
-
                     console.log("player: " + player + " piece: " + this.id);
+                    $('.player1').removeClass("active");
+                    $(this).addClass("active");
                     socket.emit('move', { player: player, piece: this.id });
                 });
             }
@@ -51,10 +53,11 @@ $(function() {
                 $('.player2').click(function () {
 
                     console.log("player: " + player + " piece: " + this.id);
+                    $('.player2').removeClass("active");
+                    $(this).addClass("active");
                     socket.emit('move', { player: player, piece: this.id });
                 });
             }
-
         }
         else {
             console.log("Not a player");

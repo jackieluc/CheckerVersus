@@ -53,26 +53,35 @@ io.on('connection', function(socket) {
     io.emit('initBoard', { html: board.join(), data: board });
 	
 	socket.on('move', function(playerData) {
-        move(playerData.player, playerData.piece);
+        if (isValidMove(playerData.player, playerData.piece)) {
+            move(playerData.player, playerData.piece);
+        }
+        else {
+
+        }
 	});
 
 });
 
-function move(playerTurn, pieceID) {
+function isValidMove(playerTurn, pieceID) {
     console.log("Turn: " + turn + ", Player : " + playerTurn + " ID: " + pieceID);
 
-    if((turn == "player1") && (playerTurn == turn)) { //Checks if it's player1's turn
-        if(p1Pieces.includes("#piece" + pieceID)) { //Checks if selected piece belongs to player1
-            console.log("WOW PLAYER 1 JUST WENT");
+    if((turn == "player1") && (playerTurn == turn)) {
+        if(p1Pieces.includes("#piece" + pieceID)) {
+            console.log("PLAYER 1 VALID MOVE");
+            return true;
         }
-        changeTurn();
     }
-    else if ((turn == "player2") && (playerTurn == turn)) {
+    if ((turn == "player2") && (playerTurn == turn)) {
         if (p2Pieces.includes("#piece" + pieceID)) {
-            console.log("PLAYER 2 JUST WENT");
+            console.log("PLAYER 2 VALID MOVE");
         }
-        changeTurn();
     }
+}
+
+function move(player, pieceID) {
+
+    changeTurn();
 }
 
 
