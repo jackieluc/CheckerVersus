@@ -16,7 +16,7 @@ var nicknames = [];
 var numUsers = 0;
 var board = [];
 var piecesIndex = [];
-var player = "player1";
+var turn = "player1";
 var p1Pieces = [];
 var p2Pieces = [];
 var pieceTracker = [['#piece00', 0, '#piece02', 0, '#piece04', 0, '#piece06', 0, '#piece08'], 
@@ -38,6 +38,7 @@ io.on('connection', function(socket) {
 	console.log(numUsers);
 	socket.nickname = "player" + numUsers;
 	nicknames.push(socket.nickname);
+	socket.emit('nickname', socket.nickname);
 	io.emit('usersOnline', nicknames);
 
     if (players.length < 2) {
@@ -52,34 +53,34 @@ io.on('connection', function(socket) {
     io.emit('initBoard', { html: board.join(), data: board });
 	
 	socket.on('move', function(playerData) {
-		if(player == "player1") { //Checks if it's player1's turn
-			if(p1Pieces.includes("#piece" + playerData.piece)) { //Checks if selected piece belongs to player1
-				isMoveValid();	
-			}
-		}else{
-			if(p2Pieces.includes("#piece" + playerData.piece)) { //Checks if selected piece belongs to player2
-				isMoveValid();
-			}
-		}
-		
+        move(playerData.player, playerData.piece);
 	});
 
 });
 
-function isMoveValid() {
-	console.log("move is valid");
-	
-	changePlayer();
+function move(playerTurn, pieceID) {
+    console.log("Turn: " + turn + ", Player : " + playerTurn + " ID: " + pieceID);
+
+    if((turn == "player1") && (playerTurn == turn)) { //Checks if it's player1's turn
+        if(p1Pieces.includes("#piece" + pieceID)) { //Checks if selected piece belongs to player1
+            console.log("WOW PLAYER 1 JUST WENT");
+        }
+        changeTurn();
+    }
+    else if ((turn == "player2") && (playerTurn == turn)) {
+        if (p2Pieces.includes("#piece" + pieceID)) {
+            console.log("PLAYER 2 JUST WENT");
+        }
+        changeTurn();
+    }
 }
 
 
-function changePlayer() {
-	if (player == "player1") {
-		player = "player2";
-	}else{
-		player = "player1";
-	}
-	console.log("changed turn... player: " + player);
+function changeTurn() {
+	if (turn == "player1") turn = "player2";
+	else if (turn == "player2") turn = "player1";
+
+	console.log("changed turn... turn: " + turn);
 }
 
 function initBoard() {
