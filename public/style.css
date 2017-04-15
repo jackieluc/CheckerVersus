@@ -44,3 +44,7 @@ body {
     background: blue;
     border-radius: 80px;
 }
+
+.active {
+    border: solid 3px white;
+}
