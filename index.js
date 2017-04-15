@@ -40,6 +40,7 @@ io.on('connection', function(socket) {
 	nicknames.push(socket.nickname);
 	socket.emit('nickname', socket.nickname);
 	io.emit('usersOnline', nicknames);
+	io.emit('turn', turn);
 
     if (players.length < 2) {
         players.push( { id: socket.nickname, player: "player" + players.length } )

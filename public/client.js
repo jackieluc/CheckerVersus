@@ -4,6 +4,7 @@ var board = [];
 var player = "";
 var players = [];
 var nickname = "";
+var $turn = $('#turn');
 
 $(function() {
 
@@ -20,6 +21,11 @@ $(function() {
     socket.on('nickname', function(nick) {
        nickname = nick;
        $("#nickname").text("You are: " + nickname);
+    });
+    
+    socket.on('turn', function(turn) {
+    	var playerTurn = turn;
+    	$turn.html("Turn: " + turn);	
     });
 
 	socket.on('player', function(data) {
@@ -60,8 +66,6 @@ $(function() {
 				rightPiece.classList.add("posMove");
 			}
 		}
-			
-		
 	});
 	
 
