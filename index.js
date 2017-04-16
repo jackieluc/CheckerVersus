@@ -37,7 +37,7 @@ io.on('connection', function(socket) {
 
 	numUsers++;
 	console.log(numUsers);
-	socket.nickname = "player" + numUsers;
+	socket.nickname = "anonymous" + numUsers;
 	nicknames.push(socket.nickname);
 	socket.emit('nickname', socket.nickname);
 	io.emit('usersOnline', nicknames);
@@ -65,9 +65,13 @@ io.on('connection', function(socket) {
 //	});
 	
 	socket.on('move', function(playerData) {
-		var movePiece = move(playerData.player, playerData.piece);
-		socket.emit('movePieces', {oldPosition: movePiece[0], newPosition: movePiece[1]});
-	});
+		var movePiece = move(playerData.piece);
+		if (isValidMove(playerData.player)) {
+			io.emit('movePieces', { player: playerData.player, oldPosition: movePiece[0], newPosition: movePiece[1]});
+			changeTurn();
+			io.emit('turn', turn);
+		}
+    });
 	
 
 	socket.on('selectPiece', function(playerData) {
@@ -86,20 +90,14 @@ io.on('connection', function(socket) {
 
 });
 
-function isValidMove(playerTurn, pieceID) {
-    console.log("Turn: " + turn + ", Player: " + playerTurn + " ID: " + pieceID);
-
+function isValidMove(playerTurn) {
     if((turn == "player1") && (playerTurn == turn)) {
-        if(p1Pieces.includes("#piece" + pieceID)) {
-			      console.log("SHOWING PLAYER 1 VALID MOVES");
-            return true;
-        }
+        console.log("Turn: " + turn + ", Player: " + playerTurn);
+        return true;
     }
     if ((turn == "player2") && (playerTurn == turn)) {
-        if (p2Pieces.includes("#piece" + pieceID)) {
-            console.log("PLAYER 2 VALID MOVE");
-            return true;
-        }
+        console.log("Turn: " + turn + ", Player: " + playerTurn);
+		return true;
     }
 }
 
@@ -165,7 +163,7 @@ function getValidMoves(player, pieceID)
 	}
 }
 
-function move(player, pieceID) {
+function move(pieceID) {
 	
 	var initialRow = parseInt(selectedPieceID.substring(0,1));
 	var initialCol = parseInt(selectedPieceID.substring(1));
@@ -181,11 +179,8 @@ function move(player, pieceID) {
 	var oldPosition = initialRow.toString() + initialCol.toString();
 	var newPosition = newRow.toString() + newCol.toString();
 	
-	console.log(oldPosition);
-	console.log(newPosition);
-	
-    changeTurn();
-	
+	console.log("old pos: " + oldPosition + " // new pos: " + newPosition);
+
 	var toReturn = [oldPosition, newPosition]
 	
 	return toReturn;
