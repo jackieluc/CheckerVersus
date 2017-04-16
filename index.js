@@ -65,26 +65,29 @@ io.on('connection', function(socket) {
 	
 	socket.on('move', function(playerData) {
 		var movePiece = move(playerData.player, playerData.piece);
-		socket.emit('movePieces', {oldPosition: movePiece[0], newPosition: movePiece[1]});
+		io.emit('updatePieces', {oldPosition: movePiece[0], newPosition: movePiece[1]});
 	});
 	
 
 	socket.on('selectPiece', function(playerData) {
-		console.log(playerData.piece);
+		console.log("Server: Player " + playerData.player + " has selected piece " + playerData.piece);
 		selectedPieceID = playerData.piece;
+		
+		// get a list of valid moves, store in var list
 		var list = getValidMoves(playerData.player, playerData.piece);
 		
 		if(list.length == 2)
 			socket.emit('grab2Piece', {left: list[0], right: list[1]});
 		
-	});
-	
-	socket.on('send2Piece', function(retrieve2Pieces) {
-		showPossibleMoves(retrieve2Pieces.left, retrieve2Pieces.right);
+		//else if (list.length == 4)
+			// socket.emit('grab4Piece'
+			// do to later
+		
 	});
 
 });
 
+/*
 function isValidMove(playerTurn, pieceID) {
     console.log("Turn: " + turn + ", Player: " + playerTurn + " ID: " + pieceID);
 
@@ -101,6 +104,7 @@ function isValidMove(playerTurn, pieceID) {
         }
     }
 }
+*/
 
 function getValidMoves(player, pieceID) 
 {
@@ -108,10 +112,11 @@ function getValidMoves(player, pieceID)
 	//if (selected.classList.contains("king"))
 	//	king = true;
 	
+	// split the piece ID to get it's coordinates, store as int
 	var row = parseInt(pieceID.substring(0, 1));
 	var col = parseInt(pieceID.substring(1));
 	
-	// we only need to check pieces that 
+	// if it is a king, check all directions. set to false for now to skip king check
 	if (false)
 	{
 		var checkRowBelow = row++;
@@ -143,13 +148,15 @@ function getValidMoves(player, pieceID)
 			checkNE.class = "posMove";
 		
 	}
-	else
+	else // if not king, do this
 	{
+		// player 1 is on top side of the game board
 		if(player == "player1")
 			var checkRow = row + 1;
+		
+		// P2 is bottom of game board
 		else 
 			var checkRow = row - 1;
-		
 		
 		
 		checkColLeft = col - 1;
@@ -172,7 +179,7 @@ function move(player, pieceID) {
 	var newRow = parseInt(pieceID.substring(0,1));
 	var newCol = parseInt(pieceID.substring(1));
 	
-	var piece = '#piece' + pieceID;
+	var piece = '#piece' + pieceID;		// not needed but okay
 	
 	pieceTracker[initialRow][initialCol] = 0;
 	pieceTracker[newRow][newCol] = piece;
@@ -180,8 +187,7 @@ function move(player, pieceID) {
 	var oldPosition = initialRow.toString() + initialCol.toString();
 	var newPosition = newRow.toString() + newCol.toString();
 	
-	console.log(oldPosition);
-	console.log(newPosition);
+	console.log("Piece at " + oldPosition + " has moved to " + newPosition);
 	
     changeTurn();
 	
@@ -194,7 +200,7 @@ function changeTurn() {
 	if (turn == "player1") turn = "player2";
 	else if (turn == "player2") turn = "player1";
 
-	console.log("changed turn... turn: " + turn);
+	console.log("changed turn... It is " + turn + "'s turn");
 }
 
 function initBoard() {
@@ -234,7 +240,7 @@ function initBoard() {
         else if (i == 3 || i == 5) {
             for (var j = 0; j < 9; j++) {
 				if (j % 2 == 1) {
-					row.push("<td id='b" + i + j + "'><div id='" + i + j + "' class='blank noPiece'></div></td>");
+					row.push("<td id='b" + i + j + "'><div id='" + i + j + "' class='noPiece'></div></td>");
 				}else{
 					row.push("<td></td>");
 				}
@@ -242,7 +248,7 @@ function initBoard() {
 		}else if(i == 4) {
 			for (var j = 0; j < 9; j++) {
 				if (j % 2 == 0) {
-					row.push("<td id='b" + i + j + "'><div id='" + i + j + "' class='blank noPiece'></td>");
+					row.push("<td id='b" + i + j + "'><div id='" + i + j + "' class='noPiece'></td>");
 				}else{
 					row.push("<td></td>");	
 				}
