@@ -32,11 +32,13 @@ var pieceTracker = [['#piece00', 0, '#piece02', 0, '#piece04', 0, '#piece06', 0,
 
 io.on('connection', function(socket) {
 
-  board = initBoard();
 	console.log('A user connected');
 
 	numUsers++;
 	console.log(numUsers);
+	if(numUsers == 2) {
+		board = initBoard();
+	}
 	socket.nickname = "player" + numUsers;
 	nicknames.push(socket.nickname);
 	socket.emit('nickname', socket.nickname);
@@ -52,7 +54,8 @@ io.on('connection', function(socket) {
     }
 
     // we need to do .join here to convert the array structure to string
-    io.emit('initBoard', { html: board.join(), data: board });
+	io.emit('initBoard', { html: board.join(), data: board });
+
 	
 //	socket.on('move', function(playerData) {
 //       if (isValidMove(playerData.player, playerData.piece)) {
@@ -64,20 +67,68 @@ io.on('connection', function(socket) {
 //	});
 	
 	socket.on('move', function(playerData) {
-		var movePiece = move(playerData.player, playerData.piece);
-		io.emit('updatePieces', {oldPosition: movePiece[0], newPosition: movePiece[1]});
+		if (playerData.player == turn) {
+			var movePiece = move(playerData.player, playerData.piece);
+			io.emit('updatePieces', {oldPosition: movePiece[0], newPosition: movePiece[1]});
+			console.log(movePiece[0] + " " + movePiece[1]);
+		}
 	});
 	
 
-	socket.on('selectPiece', function(playerData) {
-		console.log("Server: Player " + playerData.player + " has selected piece " + playerData.piece);
-		selectedPieceID = playerData.piece;
+	socket.on('selectPiece', function(playerData) {		
+		if (playerData.player == turn) {
+			console.log("Server: Player " + playerData.player + " has selected piece " + playerData.piece);
+			selectedPieceID = playerData.piece;
+			console.log(playerData.piece);
+			console.log(p1Pieces.indexOf("#piece" + selectedPieceID));
+			if (turn == "player1") {
+				if(p1Pieces.indexOf("#piece" + selectedPieceID) > 0) {
+					console.log("SHOWING " + playerData.player + "VALID MOVES");
+					var list = getValidMoves(playerData.player, playerData.piece);
+					if(list.length == 2) {
+						socket.emit('grab2Piece', {left: list[0], right: list[1]});
+					}
+				}
+			}else{
+				if(p2Pieces.indexOf("#piece" + selectedPieceID) > 0) {
+					console.log("SHOWING " + playerData.player + "VALID MOVES");
+					var list = getValidMoves(playerData.player, playerData.piece);
+					if(list.length == 2) {
+						socket.emit('grab2Piece', {left: list[0], right: list[1]});
+					}
+				}
+			}
+		}
 		
 		// get a list of valid moves, store in var list
+		/*if(turn == "player1") {
+			selectedPieceID = playerData.piece;
+			console.log(playerData.piece);
+			console.log(p1Pieces.indexOf("#piece" + selectedPieceID));
+			if(p1Pieces.indexOf("#piece" + selectedPieceID) > 0) {
+			    console.log("SHOWING PLAYER 1 VALID MOVES");
+				var list = getValidMoves(playerData.player, playerData.piece);
+				if(list.length == 2) {
+					socket.emit('grab2Piece', {left: list[0], right: list[1]});
+				}
+			}
+		}
+		
+		if(turn == "player2") {
+			selectedPieceID = playerData.piece;
+			if(p2Pieces.indexOf("#piece" + selectedPieceID) > 0) {
+			    console.log("SHOWING PLAYER 2 VALID MOVES");
+				var list = getValidMoves(playerData.player, playerData.piece);
+				if(list.length == 2) {
+					socket.emit('grab2Piece', {left: list[0], right: list[1]});
+				}
+			}
+		}*/
+		/*selectedPieceID = playerData.piece;
 		var list = getValidMoves(playerData.player, playerData.piece);
 		
 		if(list.length == 2)
-			socket.emit('grab2Piece', {left: list[0], right: list[1]});
+			socket.emit('grab2Piece', {left: list[0], right: list[1]});*/
 		
 		//else if (list.length == 4)
 			// socket.emit('grab4Piece'
@@ -172,33 +223,34 @@ function getValidMoves(player, pieceID)
 }
 
 function move(player, pieceID) {
+		var initialRow = parseInt(selectedPieceID.substring(0,1));
+		var initialCol = parseInt(selectedPieceID.substring(1));
 	
-	var initialRow = parseInt(selectedPieceID.substring(0,1));
-	var initialCol = parseInt(selectedPieceID.substring(1));
-	
-	var newRow = parseInt(pieceID.substring(0,1));
-	var newCol = parseInt(pieceID.substring(1));
-	
-	var piece = '#piece' + pieceID;		// not needed but okay
-	
-	pieceTracker[initialRow][initialCol] = 0;
-	pieceTracker[newRow][newCol] = piece;
-	
-	var oldPosition = initialRow.toString() + initialCol.toString();
-	var newPosition = newRow.toString() + newCol.toString();
-	
-	console.log("Piece at " + oldPosition + " has moved to " + newPosition);
-	
-    changeTurn();
-	
-	var toReturn = [oldPosition, newPosition]
-	
-	return toReturn;
+		var newRow = parseInt(pieceID.substring(0,1));
+		var newCol = parseInt(pieceID.substring(1));
+		
+		var piece = '#piece' + selectedPieceID;		// not needed but okay
+		
+		pieceTracker[initialRow][initialCol] = 0;
+		pieceTracker[newRow][newCol] = piece;
+		console.log(pieceTracker);
+		
+		var oldPosition = initialRow.toString() + initialCol.toString();
+		var newPosition = newRow.toString() + newCol.toString();
+		
+		console.log("Piece at " + oldPosition + " has moved to " + newPosition);
+		
+		changeTurn();
+		
+		var toReturn = [oldPosition, newPosition]
+		return toReturn;
 }
 
 function changeTurn() {
 	if (turn == "player1") turn = "player2";
 	else if (turn == "player2") turn = "player1";
+	
+	io.emit('turn', turn);
 
 	console.log("changed turn... It is " + turn + "'s turn");
 }
@@ -260,13 +312,15 @@ function initBoard() {
         board[i].push("</tr>");
     }
 
-    // add the start pieces
-    initPieces();
-	p1Pieces = piecesIndex.slice(0, 14);
-	p2Pieces = piecesIndex.slice(14);
+    // add the start pieces. Only intialize pieces when 2 players are joined
+		initPieces();
+		p1Pieces = piecesIndex.slice(0, 14);
+		p2Pieces = piecesIndex.slice(14);
 	
-	console.log(p1Pieces);
-	console.log(p2Pieces);
+	//console.log(p1Pieces);
+	//console.log(p2Pieces);
+	console.log(piecesIndex);
+	
 	// console.log(board);
 
     return board;
