@@ -69,7 +69,7 @@ io.on('connection', function(socket) {
 	socket.on('move', function(playerData) {
 		var movePiece = move(playerData.piece);
 		if (isValidMove(playerData.player)) {
-			io.emit('movePieces', { player: playerData.player, oldPosition: movePiece[0], newPosition: movePiece[1]});
+			io.emit('updatePieces', { player: playerData.player, oldPosition: movePiece[0], newPosition: movePiece[1]});
 			changeTurn();
 			io.emit('turn', turn);
 		}
@@ -132,6 +132,7 @@ io.on('connection', function(socket) {
 				}
 			}
 		}*/
+
 		/*selectedPieceID = playerData.piece;
 		var list = getValidMoves(playerData.player, playerData.piece);
 		
