@@ -21,7 +21,6 @@ $(function() {
 
     socket.on('nickname', function(nick) {
        nickname = nick;
-       $("#nickname").text("You are: " + nickname);
     });
     
     socket.on('turn', function(playerTurn) {
@@ -32,11 +31,13 @@ $(function() {
 	socket.on('player', function(data) {
         player = data.player;
         players.push(player);
+        $("#nickname").text("You are playing as: " + nickname);
     });
 
 	socket.on('spectator', function(list) {
 	   players = list;
 	   player = "";
+        $("#nickname").text("You are spectating as: " + nickname);
 	   // TODO add the nicknames of those who are playing with list[0].nickname & list[1].nickname
     });
 	
