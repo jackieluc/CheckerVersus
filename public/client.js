@@ -37,6 +37,7 @@ $(function() {
 	socket.on('spectator', function(list) {
 	   players = list;
 	   player = "";
+	   // TODO add the nicknames of those who are playing with list[0].nickname & list[1].nickname
     });
 	
 	socket.on('initBoard', function(boardData) {
@@ -73,12 +74,13 @@ $(function() {
 		var oldPos = document.getElementById(playerData.oldPosition);
 		var newPos = document.getElementById(playerData.newPosition);
 
-		oldPos.classList.remove(playerData.player);
-		oldPos.classList.add("noPiece");
-        newPos.classList.remove("noPiece");
-        newPos.classList.remove("posMove");
-        newPos.classList.add(playerData.player);
-
+		if (turn == playerData.player) {
+            oldPos.classList.remove(playerData.player);
+            oldPos.classList.add("noPiece");
+            newPos.classList.remove("noPiece");
+            newPos.classList.remove("posMove");
+            newPos.classList.add(playerData.player);
+        }
 		// //if(oldPos.classList.contains("player1") {
 		// 	oldPos.classList.remove("player1");
 		// 	oldPos.classList.add("noPiece");

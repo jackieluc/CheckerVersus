@@ -44,12 +44,12 @@ io.on('connection', function(socket) {
 	io.emit('turn', turn);
 
     if (players.length < 2) {
-        players.push( { id: socket.nickname, player: "player" + players.length } )
+        players.push( { nickname: socket.nickname, player: "player" + players.length } )
         socket.emit('player', { nickname: socket.nickname, player: "player" + players.length } );
     }
     else {
-        spectators.push( {id: socket.nickname, player: "none" } );
-        socket.emit('spectator', players);
+        spectators.push( { nickname: socket.nickname, player: "none" } );
+        io.emit('spectator', players);
     }
 
     // we need to do .join here to convert the array structure to string
@@ -84,9 +84,9 @@ io.on('connection', function(socket) {
 		
 	});
 	
-	socket.on('send2Piece', function(retrieve2Pieces) {
-		showPossibleMoves(retrieve2Pieces.left, retrieve2Pieces.right);
-	});
+	// socket.on('send2Piece', function(retrieve2Pieces) {
+	// 	showPossibleMoves(retrieve2Pieces.left, retrieve2Pieces.right);
+	// });
 
 });
 
@@ -180,10 +180,8 @@ function move(pieceID) {
 	var newPosition = newRow.toString() + newCol.toString();
 	
 	console.log("old pos: " + oldPosition + " // new pos: " + newPosition);
-
-	var toReturn = [oldPosition, newPosition]
 	
-	return toReturn;
+	return [oldPosition, newPosition];
 }
 
 function changeTurn() {
@@ -255,8 +253,8 @@ function initBoard() {
 	p1Pieces = piecesIndex.slice(0, 14);
 	p2Pieces = piecesIndex.slice(14);
 	
-	console.log(p1Pieces);
-	console.log(p2Pieces);
+	// console.log(p1Pieces);
+	// console.log(p2Pieces);
 	// console.log(board);
 
     return board;
