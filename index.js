@@ -253,8 +253,6 @@ function move(pieceID) {
 function changeTurn() {
 	if (turn == "player1") turn = "player2";
 	else if (turn == "player2") turn = "player1";
-	
-	io.emit('turn', turn);
 
 	console.log("changed turn... It is " + turn + "'s turn");
 }

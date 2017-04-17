@@ -6,6 +6,7 @@ var players = [];
 var nickname = "";
 var $turn = $('#turn');
 var turn;
+// var shadowPieces = [];
 
 $(function() {
 
@@ -48,11 +49,13 @@ $(function() {
 	
 	socket.on('grab2Piece', function(piecesToGrab) {
 	    if (turn == player) {
-            $('.blank').removeClass('posMove');
-            $('.blank').addClass('noPiece');
 
             var leftPiece = document.getElementById(piecesToGrab.left);
             var rightPiece = document.getElementById(piecesToGrab.right);
+
+            // shadowPieces.push(leftPiece);
+            // shadowPieces.push(rightPiece);
+            // console.log("pushed shadowPieces: " + shadowPieces[0].id);
 
             //console.log("left: " + leftPiece + " right: " + rightPiece);
             if (leftPiece != null) {
@@ -92,10 +95,11 @@ socket.on('updatePieces', function(piece) {
 		
 		if(oldPos.classList.contains("player1")) {
 			console.log("piece at " + piece.oldPosition + " is no longer of class 'Player1'");
-			oldPos.classList.remove("player1");
+			// oldPos.classList.remove("player1");
 			oldPos.classList.remove("active");
 			oldPos.classList.add("noPiece");
 			newPos.classList.remove("noPiece");
+            newPos.classList.add("player1");
 			// newPos.classList.add("active");
 			console.log(oldPos.classList);
 			console.log(newPos.classList);
@@ -103,7 +107,7 @@ socket.on('updatePieces', function(piece) {
 		}
 		
 		if (oldPos.classList.contains("player2")) {
-			oldPos.classList.remove("player2");
+			// oldPos.classList.remove("player2");
 			oldPos.classList.remove("active");
 			oldPos.classList.add("noPiece");
 			newPos.classList.remove("noPiece");
@@ -148,6 +152,13 @@ socket.on('updatePieces', function(piece) {
                     $('.posMove').click(function () {
                         console.log("player: " + player + " is moving a piece to: " + this.id);
                         $('.posMove').removeClass("posMove");
+                        // $(shadowPieces[0]).removeClass("posMove");
+                        // $(shadowPieces[1]).removeClass("posMove");
+                        // if (this.id == shadowPieces[0].id) $(shadowPieces[1]).addClass("noPiece");
+                        // else if (this.id == shadowPieces[1].id) $(shadowPieces[0]).addClass("noPiece");
+                        //
+                        // shadowPieces = [];
+
                         socket.emit('move', {player: player, piece: this.id});
                     });
                 }
@@ -163,6 +174,12 @@ socket.on('updatePieces', function(piece) {
                     $('.posMove').click(function () {
                         console.log("player: " + player + " is moving a piece to: " + this.id);
                         $('.posMove').removeClass("posMove");
+                        // $(shadowPieces[0]).removeClass("posMove");
+                        // $(shadowPieces[1]).removeClass("posMove");
+                        // if (this.id == shadowPieces[0].id) $(shadowPieces[1]).addClass("noPiece");
+                        // else if (this.id == shadowPieces[1].id) $(shadowPieces[0]).addClass("noPiece");
+
+                        // shadowPieces = [];
 
                         socket.emit('move', {player: player, piece: this.id});
                     });
