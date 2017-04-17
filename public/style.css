@@ -10,8 +10,8 @@ body {
 }
 
 #gameBoard td {
-  width: 80px;
-  height: 80px;
+  width: 65px;
+  height: 65px;
 }
 #gameBoard tbody tr:nth-child(odd) td:nth-child(odd) {
   background-color: #5c4400;
@@ -31,29 +31,30 @@ body {
 
 .player1 {
     margin-left: 5px;
-    width: 70px;
-    height: 70px;
+    width: 55px;
+    height: 55px;
     background: red;
     border-radius: 80px;
 }
 
 .player2 {
     margin-left: 5px;
-    width: 70px;
-    height: 70px;
+    width: 55px;
+    height: 55px;
     background: blue;
     border-radius: 80px;
 }
 
 .active {
-    border: solid 2	px white;
+
+    border: solid 2px white;
 }
 
 .noPiece {
 	opacity: 0;
     margin-left: 5px;
-    width: 70px;
-    height: 70px;
+    width: 55px;
+    height: 55px;
 	background: white;
     border-radius: 80px;
 }
@@ -61,8 +62,36 @@ body {
 .posMove {
 	opacity: 0.2;
     margin-left: 5px;
-    width: 70px;
-    height: 70px;
+    width: 55px;
+    height: 55px;
     background: white;
     border-radius: 80px;
+}
+
+@media (max-width: 730px) {
+    #gameBoard td {
+      width: 50px;
+      height: 50px;
+    }
+    .player1, 
+    .player2,
+    .noPiece,
+    .posMove {
+        width: 40px;
+        height: 40px;
+    }
+}
+
+@media (max-width: 560px) {
+    #gameBoard td {
+      width: 30px;
+      height: 30px;
+    }
+    .player1, 
+    .player2,
+    .noPiece,
+    .posMove {
+        width: 20px;
+        height: 20px;
+    }    
 }

@@ -5,8 +5,7 @@ var player = "";
 var players = [];
 var nickname = "";
 var $turn = $('#turn');
-var selectedPiece = "";
-var turn = "player1";
+var turn;
 
 $(function() {
 
@@ -22,22 +21,24 @@ $(function() {
 
     socket.on('nickname', function(nick) {
        nickname = nick;
-       $("#nickname").text("You are: " + nickname);
     });
     
-    socket.on('turn', function(turn) {
-    	var playerTurn = turn;
+    socket.on('turn', function(playerTurn) {
+    	turn = playerTurn;
     	$turn.html("Turn: " + turn);	
     });
 
 	socket.on('player', function(data) {
         player = data.player;
         players.push(player);
+        $("#nickname").text("You are playing as: " + nickname);
     });
 
 	socket.on('spectator', function(list) {
 	   players = list;
 	   player = "";
+        $("#nickname").text("You are spectating as: " + nickname);
+	   // TODO add the nicknames of those who are playing with list[0].nickname & list[1].nickname
     });
 	
 	socket.on('initBoard', function(boardData) {
@@ -46,30 +47,45 @@ $(function() {
 	});
 	
 	socket.on('grab2Piece', function(piecesToGrab) {
-		$('.posMove').addClass('noPiece');
-		$('.posMove').removeClass('posMove');
+	    if (turn == player) {
+            $('.blank').removeClass('posMove');
+            $('.blank').addClass('noPiece');
 
-		var leftPiece = document.getElementById(piecesToGrab.left);
-		var rightPiece = document.getElementById(piecesToGrab.right);
-		
-		//console.log("left: " + leftPiece + " right: " + rightPiece);
-		if(leftPiece != null) {
-			if (leftPiece.classList.contains("noPiece"))
-			{	
-				leftPiece.classList.remove("noPiece");
-				leftPiece.classList.add("posMove");
-			}
-		}
-		if(rightPiece != null) {
-			if (rightPiece.classList.contains("noPiece") && rightPiece != null)
-			{	
-				rightPiece.classList.remove("noPiece");
-				rightPiece.classList.add("posMove");
-			}
-		}
+            var leftPiece = document.getElementById(piecesToGrab.left);
+            var rightPiece = document.getElementById(piecesToGrab.right);
+
+            //console.log("left: " + leftPiece + " right: " + rightPiece);
+            if (leftPiece != null) {
+                if (leftPiece.classList.contains("noPiece")) {
+                    leftPiece.classList.remove("noPiece");
+                    leftPiece.classList.add("posMove");
+                }
+            }
+            if (rightPiece != null) {
+                if (rightPiece.classList.contains("noPiece")) {
+                    rightPiece.classList.remove("noPiece");
+                    rightPiece.classList.add("posMove");
+                }
+            }
+        }
 	});
+
+/*
+	socket.on('movePieces', function(playerData) {
+
+    var oldPos = document.getElementById(playerData.oldPosition);
+		var newPos = document.getElementById(playerData.newPosition);
+
+		if (turn == playerData.player) {
+            oldPos.classList.remove(playerData.player);
+            oldPos.classList.add("noPiece");
+            newPos.classList.remove("noPiece");
+            newPos.classList.remove("posMove");
+            newPos.classList.add(playerData.player);
+        }
+*/
 	
-	socket.on('updatePieces', function(piece) {
+socket.on('updatePieces', function(piece) {
 		var oldPos = document.getElementById(piece.oldPosition);
 		var newPos = document.getElementById(piece.newPosition);
 		console.log("Piece has been updated");
@@ -95,12 +111,28 @@ $(function() {
 			newPos.classList.add("active");
 			newPos.classList.add("player2");
 		}
-		
 	});
 	
 
     $gameBoard.click(function () {
         // cannot click on the pieces if you are not a player
+        if (players.includes(player)) {
+            console.log("Player: " + player + " nickname: " + nickname);
+            if (player == turn) {
+                $(`.${player}`).click(function () {
+                    console.log("player: " + player + " piece: " + this.id);
+                    $(`.${player}`).removeClass("active");
+                    $(this).addClass("active");
+                    socket.emit('selectPiece', { player: player, piece: this.id });
+                });
+
+                $('.posMove').click(function () {
+                    console.log("player: " + player + " move to: " + this.id);
+                    $('.blank').removeClass('posMove');
+                    $('.blank').addClass('noPiece');
+
+                    socket.emit('move', { player: player, piece: this.id });
+/*
 		// player is clicking a piece
 		
         if (player == turn) {
@@ -127,6 +159,7 @@ $(function() {
                     $('.player2').removeClass("active");
                     $(this).addClass("active");
                     socket.emit('selectPiece', { player: player, piece: this.id});
+*/
                 });
 				
 				$('.posMove').click(function () {
@@ -143,40 +176,4 @@ $(function() {
 		}		
 		
     });
-	
-	socket.on('turn', function(data) {
-		turn = data;
-	});
-	
-/*
-	$gameBoard.click(function () {
-	// cannot click on the pieces if you are not a player
-	// player is clicking a shadow
-	
-	if (players.includes(player)) {
-		console.log("Move");
-		if (player == "player1") {
-			$('.posMove').click(function () {
-				console.log("player: " + player + " move to: " + this.id);
-				$('.player1').removeClass("active");
-				$('.posMove').removeClass("posMove");
-				$('.posMove').addClass("noPiece");
-				
-				socket.emit('move', { player: player, piece: this.id });
-			});
-		}
-		else if (player == "player2") {
-			$('.posMove').click(function () {
-				console.log("player: " + player + " move to: " + this.id);
-				$('.player2').removeClass("active");
-				$('.posMove').removeClass('posMove');
-				$('.posMove').addClass('noPiece');
-				
-				socket.emit('move', { player: player, piece: this.id });
-			});
-		}
-	}
-});
-*/
-
 });

@@ -35,22 +35,22 @@ io.on('connection', function(socket) {
 	console.log('A user connected');
 
 	numUsers++;
-	console.log(numUsers);
 	if(numUsers == 2) {
 		board = initBoard();
 	}
-	socket.nickname = "player" + numUsers;
+	socket.nickname = "anonymous" + numUsers;
 	nicknames.push(socket.nickname);
 	socket.emit('nickname', socket.nickname);
 	io.emit('usersOnline', nicknames);
 	io.emit('turn', turn);
 
     if (players.length < 2) {
-        players.push( { id: socket.nickname, player: "player" + players.length } )
+        players.push( { nickname: socket.nickname, player: "player" + players.length } )
         socket.emit('player', { nickname: socket.nickname, player: "player" + players.length } );
     }
     else {
-        socket.emit('spectator', players);
+        spectators.push( { nickname: socket.nickname, player: "none" } );
+        io.emit('spectator', players);
     }
 
     // we need to do .join here to convert the array structure to string
@@ -67,13 +67,21 @@ io.on('connection', function(socket) {
 //	});
 	
 	socket.on('move', function(playerData) {
+		var movePiece = move(playerData.piece);
+		if (isValidMove(playerData.player)) {
+			io.emit('movePieces', { player: playerData.player, oldPosition: movePiece[0], newPosition: movePiece[1]});
+			changeTurn();
+			io.emit('turn', turn);
+		}
+    });
+/*
 		if (playerData.player == turn) {
 			var movePiece = move(playerData.player, playerData.piece);
 			io.emit('updatePieces', {oldPosition: movePiece[0], newPosition: movePiece[1]});
 			console.log(movePiece[0] + " " + movePiece[1]);
 		}
 	});
-	
+*/
 
 	socket.on('selectPiece', function(playerData) {		
 		if (playerData.player == turn) {
@@ -135,27 +143,25 @@ io.on('connection', function(socket) {
 			// do to later
 		
 	});
-
+	
+	// socket.on('send2Piece', function(retrieve2Pieces) {
+	// 	showPossibleMoves(retrieve2Pieces.left, retrieve2Pieces.right);
+	// });
 });
 
-/*
+
 function isValidMove(playerTurn, pieceID) {
     console.log("Turn: " + turn + ", Player: " + playerTurn + " ID: " + pieceID);
-
     if((turn == "player1") && (playerTurn == turn)) {
-        if(p1Pieces.includes("#piece" + pieceID)) {
-			      console.log("SHOWING PLAYER 1 VALID MOVES");
-            return true;
-        }
+        console.log("Turn: " + turn + ", Player: " + playerTurn);
+        return true;
     }
     if ((turn == "player2") && (playerTurn == turn)) {
-        if (p2Pieces.includes("#piece" + pieceID)) {
-            console.log("PLAYER 2 VALID MOVE");
-            return true;
-        }
+        console.log("Turn: " + turn + ", Player: " + playerTurn);
+		return true;
     }
 }
-*/
+
 
 function getValidMoves(player, pieceID) 
 {
@@ -222,28 +228,25 @@ function getValidMoves(player, pieceID)
 	}
 }
 
-function move(player, pieceID) {
-		var initialRow = parseInt(selectedPieceID.substring(0,1));
-		var initialCol = parseInt(selectedPieceID.substring(1));
+function move(pieceID) {
 	
-		var newRow = parseInt(pieceID.substring(0,1));
-		var newCol = parseInt(pieceID.substring(1));
-		
-		var piece = '#piece' + selectedPieceID;		// not needed but okay
-		
-		pieceTracker[initialRow][initialCol] = 0;
-		pieceTracker[newRow][newCol] = piece;
-		console.log(pieceTracker);
-		
-		var oldPosition = initialRow.toString() + initialCol.toString();
-		var newPosition = newRow.toString() + newCol.toString();
-		
-		console.log("Piece at " + oldPosition + " has moved to " + newPosition);
-		
-		changeTurn();
-		
-		var toReturn = [oldPosition, newPosition]
-		return toReturn;
+	var initialRow = parseInt(selectedPieceID.substring(0,1));
+	var initialCol = parseInt(selectedPieceID.substring(1));
+	
+	var newRow = parseInt(pieceID.substring(0,1));
+	var newCol = parseInt(pieceID.substring(1));
+	
+	var piece = '#piece' + selectedPieceID;
+	
+	pieceTracker[initialRow][initialCol] = 0;
+	pieceTracker[newRow][newCol] = piece;
+	
+	var oldPosition = initialRow.toString() + initialCol.toString();
+	var newPosition = newRow.toString() + newCol.toString();
+	
+	console.log("old pos: " + oldPosition + " // new pos: " + newPosition);
+	
+	return [oldPosition, newPosition];
 }
 
 function changeTurn() {
@@ -319,8 +322,7 @@ function initBoard() {
 	
 	//console.log(p1Pieces);
 	//console.log(p2Pieces);
-	console.log(piecesIndex);
-	
+	// console.log(piecesIndex);
 	// console.log(board);
 
     return board;
